@@ -435,6 +435,24 @@
           }
         }
       },
+      "Material.Avalonia/3.11.0": {
+        "type": "package",
+        "dependencies": {
+          "Avalonia": "11.1.0"
+        },
+        "compile": {
+          "lib/net8.0/Material.Avalonia.dll": {},
+          "lib/net8.0/Material.Colors.dll": {},
+          "lib/net8.0/Material.Ripple.dll": {},
+          "lib/net8.0/Material.Styles.dll": {}
+        },
+        "runtime": {
+          "lib/net8.0/Material.Avalonia.dll": {},
+          "lib/net8.0/Material.Colors.dll": {},
+          "lib/net8.0/Material.Ripple.dll": {},
+          "lib/net8.0/Material.Styles.dll": {}
+        }
+      },
       "MicroCom.Runtime/0.11.0": {
         "type": "package",
         "compile": {
@@ -1185,6 +1203,27 @@
         "runtimes/win-x86/native/libHarfBuzzSharp.dll"
       ]
     },
+    "Material.Avalonia/3.11.0": {
+      "sha512": "OzI2hfnao3bpDV6RvICRiSsG2GVmUpNDdMRNWIt+j1xZ4yussofUBmLyui2d19dWCTjgYY3iFiWKnegKNMkHCA==",
+      "type": "package",
+      "path": "material.avalonia/3.11.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "FavIcon.png",
+        "README.md",
+        "lib/net8.0/Material.Avalonia.dll",
+        "lib/net8.0/Material.Colors.dll",
+        "lib/net8.0/Material.Ripple.dll",
+        "lib/net8.0/Material.Styles.dll",
+        "lib/netstandard2.0/Material.Avalonia.dll",
+        "lib/netstandard2.0/Material.Colors.dll",
+        "lib/netstandard2.0/Material.Ripple.dll",
+        "lib/netstandard2.0/Material.Styles.dll",
+        "material.avalonia.3.11.0.nupkg.sha512",
+        "material.avalonia.nuspec"
+      ]
+    },
     "MicroCom.Runtime/0.11.0": {
       "sha512": "MEnrZ3UIiH40hjzMDsxrTyi8dtqB5ziv3iBeeU4bXsL/7NLSal9F1lZKpK+tfBRnUoDSdtcW3KufE4yhATOMCA==",
       "type": "package",
@@ -1427,7 +1466,8 @@
       "Avalonia.Desktop >= 11.2.7",
       "Avalonia.Diagnostics >= 11.2.7",
       "Avalonia.Fonts.Inter >= 11.2.7",
-      "Avalonia.Themes.Fluent >= 11.2.7"
+      "Avalonia.Themes.Fluent >= 11.2.7",
+      "Material.Avalonia >= 3.11.0"
     ]
   },
   "packageFolders": {
@@ -1492,6 +1532,10 @@
           "Avalonia.Themes.Fluent": {
             "target": "Package",
             "version": "[11.2.7, )"
+          },
+          "Material.Avalonia": {
+            "target": "Package",
+            "version": "[3.11.0, )"
           }
         },
         "imports": [
