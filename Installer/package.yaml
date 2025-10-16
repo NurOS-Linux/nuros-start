@@ -31,9 +31,12 @@ ghc-options:
 
 library:
   source-dirs: src
+  dependencies:
+  - vector
+  - text >= 2.1.3
 
 executables:
-  Installer-exe:
+  nuros-install:
     main:                Main.hs
     source-dirs:         app
     ghc-options:

@@ -1,17 +1,19 @@
 cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.38.0.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
 name:           Installer
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/Installer#readme>
+synopsis:       Installer for NurOS Linux
+description:    Please see the README on GitHub at <https://github.com/NurOS-Linux/NurOS-Start#readme>
+category:       System
 homepage:       https://github.com/githubuser/Installer#readme
 bug-reports:    https://github.com/githubuser/Installer/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2025 Author name here
+author:         ruzen42
+maintainer:     malledeferlive@gmail.com
+copyright:      2025 Jarolav Mihajlenko
 license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
@@ -26,6 +28,7 @@ source-repository head
 library
   exposed-modules:
       Lib
+      Storage.Filesystem
   other-modules:
       Paths_Installer
   autogen-modules:
@@ -35,9 +38,11 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , text >=2.1.3
+    , vector
   default-language: Haskell2010
 
-executable Installer-exe
+executable nuros-install
   main-is: Main.hs
   other-modules:
       Paths_Installer
