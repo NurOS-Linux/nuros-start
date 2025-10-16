@@ -1,10 +1,9 @@
 -- NurOS Ruzen42 2025
 {-# LANGUAGE OverloadedStrings #-}
 
-module Main where
+module Main (main) where
 
 import Options.Applicative
-import Data.Semigroup ((<>))
 
 data Options = Options
   { optVerbose :: Bool
@@ -24,7 +23,7 @@ main = do
   if optVerbose opts
     then putStrLn "verbose on"
     else return ()
-  putStrLn optJsonFile opts
+  putStrLn $ optJsonFile opts
 
 optionsParser :: Parser Options
 optionsParser = Options

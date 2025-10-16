@@ -57,6 +57,7 @@ executable nuros-install
   build-depends:
       Installer
     , base >=4.7 && <5
+    , optparse-applicative
   default-language: Haskell2010
 
 test-suite Installer-test
