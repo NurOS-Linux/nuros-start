@@ -1,39 +1,39 @@
 {
-  description = "Flake for the nuros-install";
+  description = "Lightweight flake for the nuros-start Stack-based Haskell project";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    haskellNix.url = "github:input-output-hk/haskell.nix";
   };
 
-  outputs = { self, nixpkgs, flake-utils, haskellNix, ... }:
+  outputs = { self, nixpkgs, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        overlays = [ haskellNix.overlay ];
-        pkgs = import nixpkgs { inherit system overlays; };
-
-        project = pkgs.haskell-nix.stackProject {
-          src = ./.;
-          stackYaml = "stack.yaml";
-        };
+        pkgs = import nixpkgs { inherit system; };
+        hsPkgs = pkgs.haskellPackages;
+        pname = "nuros-start";
       in
       {
-        packages = {
-          nuros-start = project.packages."nuros-install";
-          default = project.packages."nuros-install";
-        };
+        packages.${pname} = hsPkgs.callCabal2nix pname ./. { };
+        packages.default = self.packages.${system}.${pname};
 
-        devShell = pkgs.mkShell {
-          inputsFrom = [ project.shell ];
-
+        devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
+            cabal-install
+            stack
+            pkg-config
+
+            e2fsprogs
             dosfstools
+            xfsprogs
+            btrfs-progs
+            f2fs-tools
             util-linux
           ];
 
           shellHook = ''
-            echo "Use: stack build | stack repl | ghci"
+            echo "🧠 Nix dev shell for nuros-start"
+            echo "Use: stack build | cabal build | ghci"
           '';
         };
       });
