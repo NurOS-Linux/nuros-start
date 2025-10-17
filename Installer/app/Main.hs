@@ -43,6 +43,6 @@ optionsParser = Options
 optsInfo :: ParserInfo Options
 optsInfo = info (optionsParser <**> helper)
   ( fullDesc
- <> progDesc "Install nuros via json"
+ <> progDesc "A Haskell program that reads a JSON file and bootstrapping NurOS onto your device."
  <> header "nuros-install — utility for install NurOS from *.json config" )
 

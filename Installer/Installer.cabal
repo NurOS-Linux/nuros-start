@@ -30,6 +30,7 @@ library
       Lib
       Storage.Filesystem
       Storage.Formatter
+      User.ManageUser
   other-modules:
       Paths_Installer
   autogen-modules:
