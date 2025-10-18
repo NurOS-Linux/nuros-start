@@ -36,6 +36,7 @@ library:
   - text-short 
   - text 
   - process 
+  - monad-logger 
 
 executables:
   nuros-install:

@@ -1,7 +1,13 @@
 -- NurOS Ruzen42 2025
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE FlexibleContexts #-}
 
-module Storage.Filesystem (parseProcPartitions, Disk(..), Partition(..)) where
+module Storage.Filesystem
+  ( parseProcPartitions
+  , Disk(..)
+  , Partition(..)
+  ) where
 
 import Data.Char (isDigit)
 import Data.Text.Short (ShortText)
@@ -11,6 +17,8 @@ import qualified Data.Text.Read as TR
 import qualified Data.Vector as V
 import Data.List (groupBy, sortOn)
 import GHC.Generics (Generic)
+import Control.Monad.Logger (MonadLogger, logDebugN)
+import Data.String (fromString)
 
 data Partition = Partition
   { deviceName :: !ShortText
@@ -22,16 +30,27 @@ data Disk = Disk
   , partitions :: !(V.Vector Partition)
   } deriving (Show, Eq, Generic)
 
-parseProcPartitions :: ShortText -> [Disk]
-parseProcPartitions input =
-  let
-    ls = drop 1 $ T.lines (TS.toText input)
-    entries = mapMaybe parseLine ls
-    grouped = groupBy sameDisk $ sortOn fst entries
-  in
-    [ Disk (TS.fromText name) (V.fromList parts)
-    | (name, parts) <- map collect grouped
-    ]
+-- | Парсит содержимое /proc/partitions и логирует шаги через monad-logger
+parseProcPartitions :: MonadLogger m => ShortText -> m [Disk]
+parseProcPartitions input = do
+  let ls = drop 1 $ T.lines (TS.toText input)
+  logDebugN $ "Parsing " <> T.pack (show (length ls)) <> " lines from /proc/partitions"
+
+  let entries = mapMaybe parseLine ls
+  logDebugN $ "Parsed " <> T.pack (show (length entries)) <> " partition entries"
+
+  let grouped = groupBy sameDisk $ sortOn fst entries
+  logDebugN $ "Grouped into " <> T.pack (show (length grouped)) <> " disks"
+
+  let disks =
+        [ Disk (TS.fromText name) (V.fromList parts)
+        | (name, parts) <- map collect grouped
+        ]
+
+  let diskNames = T.intercalate ", " (map (TS.toText . diskName) disks)
+  logDebugN $ "Final parsed disks: [" <> diskNames <> "]"
+
+  return disks
 
 parseLine :: T.Text -> Maybe (T.Text, Partition)
 parseLine line =
