@@ -28,8 +28,10 @@ source-repository head
 library
   exposed-modules:
       Lib
+      PackageManagement.InstallSets
       Storage.Filesystem
       Storage.Formatter
+      Storage.Grub
       User.ManageUser
   other-modules:
       Paths_Installer
