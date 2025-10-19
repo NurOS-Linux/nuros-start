@@ -33,6 +33,7 @@ library
       Storage.Formatter
       Storage.Grub
       User.ManageUser
+      User.Network
   other-modules:
       Paths_Installer
   autogen-modules:

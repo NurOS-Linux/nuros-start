@@ -30,7 +30,6 @@ data Disk = Disk
   , partitions :: !(V.Vector Partition)
   } deriving (Show, Eq, Generic)
 
--- | Парсит содержимое /proc/partitions и логирует шаги через monad-logger
 parseProcPartitions :: MonadLogger m => ShortText -> m [Disk]
 parseProcPartitions input = do
   let ls = drop 1 $ T.lines (TS.toText input)

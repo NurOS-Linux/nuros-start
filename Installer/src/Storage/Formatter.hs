@@ -1,5 +1,6 @@
 -- NurOS Ruzen42 2025
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE FlexibleContexts #-}
 
 module Storage.Formatter
   ( FS(..)
@@ -14,6 +15,8 @@ import qualified Data.Text.Short as TS
 import qualified Data.Text as T
 import Data.List (isInfixOf)
 import Data.Maybe (mapMaybe)
+import Control.Monad.IO.Class (MonadIO, liftIO)
+import Control.Monad.Logger (MonadLogger, logDebugN)
 
 data FS = Ext4 | Btrfs | F2fs | Xfs | Fat32
   deriving (Show, Eq)
@@ -30,22 +33,38 @@ data FormatResult
   | FRFailure !TS.ShortText
   deriving (Show, Eq)
 
-safeFormat :: TS.ShortText -> FS -> FormatOptions -> IO FormatResult
+
+safeFormat
+  :: (MonadLogger m, MonadIO m)
+  => TS.ShortText -> FS -> FormatOptions -> m FormatResult
 safeFormat device fs opts = do
-  existsOk <- isBlockDevice device
+  existsOk <- liftIO $ isBlockDevice device
   if not existsOk
-    then return $ FRFailure $ "Device not found: " <> device
+    then do
+      let msg = "Device not found: " <> device
+      logDebugN $ T.pack (show (FRFailure msg))
+      pure $ FRFailure msg
     else do
-      mounted <- findMounts device
+      mounted <- liftIO $ findMounts device
       if not (null mounted)
-        then return $ FRFailure $ "Device is mounted: " <> TS.fromText (T.pack (unlines mounted))
+        then do
+          let msg = "Device is mounted: " <> TS.fromText (T.pack (unlines mounted))
+          logDebugN $ T.pack (show (FRFailure msg))
+          pure $ FRFailure msg
         else if requireToken opts /= device
-          then return $ FRFailure $ "RequireToken is missing: " <> device
+          then do
+            let msg = "RequireToken is missing: " <> device
+            logDebugN $ T.pack (show (FRFailure msg))
+            pure $ FRFailure msg
           else do
             let cmd = buildMkfsCommand device fs (extraArgs opts)
             if dryRun opts
-              then return $ FRDryRun cmd
-              else executeCmd cmd
+              then do
+                logDebugN "Dry run mode enabled"
+                pure $ FRDryRun cmd
+              else do
+                logDebugN $ "Executing: " <> TS.toText cmd
+                liftIO $ executeCmd cmd
 
 isBlockDevice :: TS.ShortText -> IO Bool
 isBlockDevice dev = do
