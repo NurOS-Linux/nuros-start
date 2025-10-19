@@ -36,7 +36,7 @@ data WifiOptions = WifiOptions
 data NetworkOptions = NetworkOptions
   { noDevice   :: !NetworkDevice
   , noWifi     :: !(Maybe WifiOptions)
-  , noDryRun   :: !Bool
+  , networkDryRun   :: !Bool
   } deriving (Show, Eq)
 
 data ConnectResult
@@ -53,21 +53,21 @@ networkConnect opts = do
   case ndType dev of
     Wired -> do
       let cmd = buildWiredCmd dev
-      if noDryRun opts
-        then runAndLog cmd
-        else dryRun cmd
+      if networkDryRun opts
+        then dryRun cmd
+        else runAndLog cmd
 
     Wireless ->
       case noWifi opts of
         Nothing -> do
           let msg = "Wi-Fi options missing for device: " <> ndName dev
-          logDebugN $ T.pack $ show $ CRFailure msg
+          logDebugN (T.pack (show (CRFailure msg)))
           pure $ CRFailure msg
         Just wf -> do
           let cmd = buildWifiCmd dev wf
-          if noDryRun opts
-            then runAndLog cmd
-            else dryRun cmd
+          if networkDryRun opts
+            then dryRun cmd
+            else runAndLog cmd
 
 runAndLog :: (MonadLogger m, MonadIO m) => TS.ShortText -> m ConnectResult
 runAndLog cmd = do
