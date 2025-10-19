@@ -1,8 +1,8 @@
--- NurOS Ruzen42 2025
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE FlexibleContexts #-}
 
+-- NurOS Ruzen42 2025
 module Storage.Filesystem
   ( parseProcPartitions
   , Disk(..)
@@ -18,7 +18,6 @@ import qualified Data.Vector as V
 import Data.List (groupBy, sortOn)
 import GHC.Generics (Generic)
 import Control.Monad.Logger (MonadLogger, logDebugN)
-import Data.String (fromString)
 
 data Partition = Partition
   { deviceName :: !ShortText

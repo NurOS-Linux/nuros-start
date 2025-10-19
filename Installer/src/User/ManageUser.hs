@@ -1,6 +1,6 @@
--- NurOS Ruzen42 2025
 {-# LANGUAGE DeriveGeneric #-}
 
+-- NurOS Ruzen42 2025
 module User.ManageUser where
 
 import GHC.Generics (Generic)

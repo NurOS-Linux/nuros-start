@@ -1,7 +1,7 @@
--- NurOS Ruzen42 2025
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE FlexibleContexts #-}
 
+-- NurOS Ruzen42 2025
 module Storage.Formatter
   ( FS(..)
   , FormatOptions(..)
@@ -32,7 +32,6 @@ data FormatResult
   | FRSuccess !TS.ShortText !TS.ShortText
   | FRFailure !TS.ShortText
   deriving (Show, Eq)
-
 
 safeFormat
   :: (MonadLogger m, MonadIO m)
