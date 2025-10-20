@@ -10,6 +10,7 @@ module User.Network
   , NetworkOptions(..)
   , ConnectResult(..)
   , networkConnect
+  , buildWifiCmd 
   ) where
 
 import qualified Data.Text as T

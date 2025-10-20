@@ -60,3 +60,9 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - Installer
+    - hspec >=2.0
+    - QuickCheck >=2.14
+    - text
+    - text-short
+    - vector
+    - monad-logger 

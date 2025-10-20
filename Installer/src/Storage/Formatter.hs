@@ -7,6 +7,8 @@ module Storage.Formatter
   , FormatOptions(..)
   , FormatResult(..)
   , safeFormat
+  , buildMkfsCommand 
+  , shellEscape
   ) where
 
 import System.Process (readProcessWithExitCode)

@@ -78,5 +78,11 @@ test-suite Installer-test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       Installer
+    , QuickCheck >=2.14
     , base >=4.7 && <5
+    , hspec >=2.0
+    , monad-logger
+    , text
+    , text-short
+    , vector
   default-language: Haskell2010

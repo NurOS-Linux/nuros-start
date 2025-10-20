@@ -8,6 +8,7 @@ module Storage.Filesystem
   , Disk(..)
   , Partition(..)
   , FSResult(..)
+  , splitName
   ) where
 
 import Data.Char (isDigit)
