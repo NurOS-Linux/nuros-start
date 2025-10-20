@@ -7,6 +7,7 @@ module Storage.Filesystem
   ( parseProcPartitions
   , Disk(..)
   , Partition(..)
+  , FSResult(..)
   ) where
 
 import Data.Char (isDigit)
@@ -17,7 +18,12 @@ import qualified Data.Text.Read as TR
 import qualified Data.Vector as V
 import Data.List (groupBy, sortOn)
 import GHC.Generics (Generic)
-import Control.Monad.Logger (MonadLogger, logDebugN)
+import Control.Monad.Logger (MonadLogger, logDebugN, logErrorN)
+
+data FSResult a
+  = FSSuccess a        -- ^ Успешный результат
+  | FSError ShortText  -- ^ Ошибка в виде текста
+  deriving (Show, Eq, Generic)
 
 data Partition = Partition
   { deviceName :: !ShortText
@@ -29,7 +35,7 @@ data Disk = Disk
   , partitions :: !(V.Vector Partition)
   } deriving (Show, Eq, Generic)
 
-parseProcPartitions :: MonadLogger m => ShortText -> m [Disk]
+parseProcPartitions :: MonadLogger m => ShortText -> m (FSResult [Disk])
 parseProcPartitions input = do
   let ls = drop 1 $ T.lines (TS.toText input)
   logDebugN $ "Parsing " <> T.pack (show (length ls)) <> " lines from /proc/partitions"
@@ -37,18 +43,23 @@ parseProcPartitions input = do
   let entries = mapMaybe parseLine ls
   logDebugN $ "Parsed " <> T.pack (show (length entries)) <> " partition entries"
 
-  let grouped = groupBy sameDisk $ sortOn fst entries
-  logDebugN $ "Grouped into " <> T.pack (show (length grouped)) <> " disks"
+  if null entries
+    then do
+      logErrorN "No valid partitions found in /proc/partitions"
+      return $ FSError "No valid partitions found"
+    else do
+      let grouped = groupBy sameDisk $ sortOn fst entries
+      logDebugN $ "Grouped into " <> T.pack (show (length grouped)) <> " disks"
 
-  let disks =
-        [ Disk (TS.fromText name) (V.fromList parts)
-        | (name, parts) <- map collect grouped
-        ]
+      let disks =
+            [ Disk (TS.fromText name) (V.fromList parts)
+            | (name, parts) <- map collect grouped
+            ]
 
-  let diskNames = T.intercalate ", " (map (TS.toText . diskName) disks)
-  logDebugN $ "Final parsed disks: [" <> diskNames <> "]"
+      let diskNames = T.intercalate ", " (map (TS.toText . diskName) disks)
+      logDebugN $ "Final parsed disks: [" <> diskNames <> "]"
 
-  return disks
+      return $ FSSuccess disks
 
 parseLine :: T.Text -> Maybe (T.Text, Partition)
 parseLine line =
