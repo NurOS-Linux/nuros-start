@@ -31,7 +31,7 @@ library
       PackageManagement.InstallSets
       Storage.Filesystem
       Storage.Formatter
-      Storage.Grub
+      Storage.OSLoader
       User.Keymap
       User.ManageUser
       User.Network

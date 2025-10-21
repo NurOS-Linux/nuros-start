@@ -22,8 +22,8 @@ import GHC.Generics (Generic)
 import Control.Monad.Logger (MonadLogger, logDebugN, logErrorN)
 
 data FSResult a
-  = FSSuccess a        -- ^ Успешный результат
-  | FSError ShortText  -- ^ Ошибка в виде текста
+  = FSSuccess a        
+  | FSError ShortText 
   deriving (Show, Eq, Generic)
 
 data Partition = Partition
