@@ -1,15 +1,25 @@
--- NurOS Ruzen42 2025
 {-# LANGUAGE OverloadedStrings #-}
 
+-- NurOS Ruzen42 2025
 module Main (main) where
 
 import Options.Applicative
+import Lib
+import Storage.OSLoader 
+import qualified Data.Text.Short as TS
 
 data Options = Options
   { optVerbose :: Bool
   , optDryRun  :: Bool
   , optJsonFile :: FilePath
   } deriving (Show)
+
+installOpts :: InstallOptions 
+installOpts = InstallOptions 
+  { osLoaderOpts = SystemdBoot 
+      SystemdBootOptions 
+        { efiDirectoryS = TS.fromString "/boot/efi/" }
+  }
 
 main :: IO ()
 main = do
@@ -24,6 +34,8 @@ main = do
     then putStrLn "verbose on"
     else return ()
   putStrLn $ optJsonFile opts
+  result <- installNurOS installOpts
+  putStrLn $ show result
 
 optionsParser :: Parser Options
 optionsParser = Options
@@ -44,5 +56,4 @@ optsInfo :: ParserInfo Options
 optsInfo = info (optionsParser <**> helper)
   ( fullDesc
  <> progDesc "A Haskell program that reads a JSON file and bootstrapping NurOS onto your device."
- <> header "nuros-install — utility for install NurOS from *.json config" )
-
+ <> header "nuros-install – utility for install NurOS from *.json config" )

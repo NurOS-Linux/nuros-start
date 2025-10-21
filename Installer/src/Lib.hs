@@ -15,7 +15,7 @@ import Data.Text.Short (ShortText)
 import qualified Data.Text.Short as TS
 
 data InstallOptions = InstallOptions 
-  { osLoader :: OSLoaderOptions 
+  { osLoaderOpts :: OSLoaderOptions 
   } deriving (Show)
 
 data InstallResult 
@@ -24,17 +24,22 @@ data InstallResult
   | InstallFailure !ShortText
   deriving (Show, Eq)
 
-installNurOS :: (MonadIO m, MonadLogger m) => InstallOptions -> m InstallResult
-installNurOS opts = do
-  logInfoN "Starting NurOS installation..."
-  installationPipeline opts
+installNurOS :: InstallOptions -> IO T.Text 
+installNurOS opts = runStdoutLoggingT $ do
+  result <- installationPipeline opts
+  return $ resultToText result
+
+resultToText :: InstallResult -> T.Text
+resultToText (InstallDryRun msg) = "Dry run: " <> TS.toText msg
+resultToText (InstallSuccess title msg) = "Success: " <> TS.toText title <> " - " <> TS.toText msg
+resultToText (InstallFailure err) = "Failed: " <> TS.toText err
 
 installationPipeline :: (MonadIO m, MonadLogger m) => InstallOptions -> m InstallResult
 installationPipeline opts = do
-  logInfoN "Running installation pipeline..."
+  logInfoN "Starting NurOS installation..." 
   
   result <- runPipeline
-    [ ("OSLoader", installOSLoaderStep)
+    [ ("OSLoader", installOSLoaderStep (osLoaderOpts opts))
     , ("Network", installNetworkStep)
     , ("Storage", installStorageStep)
     ]
@@ -56,9 +61,9 @@ installationPipeline opts = do
         Nothing -> runPipeline rest
         err -> return err
 
-installOSLoaderStep :: (MonadIO m, MonadLogger m) => m (Maybe T.Text)
-installOSLoaderStep = do
-  result <- installOSLoader (SystemdBoot (SystemdBootOptions "/boot/efi"))
+installOSLoaderStep :: (MonadIO m, MonadLogger m) => OSLoaderOptions -> m (Maybe T.Text)
+installOSLoaderStep loaderOpts = do
+  result <- installOSLoader loaderOpts
   case result of
     OLSuccess cmd args -> do
       logInfoN $ "OS Loader configured: " <> T.pack (TS.unpack cmd)
@@ -74,11 +79,11 @@ installOSLoaderStep = do
 installNetworkStep :: (MonadIO m, MonadLogger m) => m (Maybe T.Text)
 installNetworkStep = do
   logInfoN "Configuring network..."
-  -- TODO: installNetwork
+  -- TODO: installNetwork with options
   return Nothing
 
 installStorageStep :: (MonadIO m, MonadLogger m) => m (Maybe T.Text)
 installStorageStep = do
   logInfoN "Configuring storage..."
-  -- TODO: installStorage
+  -- TODO: installStorage with options
   return Nothing

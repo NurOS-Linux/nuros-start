@@ -49,6 +49,7 @@ executables:
     dependencies:
     - Installer
     - optparse-applicative 
+    - text-short 
 
 tests:
   Installer-test:
