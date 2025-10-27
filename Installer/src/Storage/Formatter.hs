@@ -43,14 +43,14 @@ safeFormat device fs opts = do
   if not existsOk
     then do
       let msg = "Device not found: " <> device
-      logDebugN $ T.pack (show (FRFailure msg))
+      logDebugN $ T.pack $ show (FRFailure msg)
       pure $ FRFailure msg
     else do
       mounted <- liftIO $ findMounts device
       if not (null mounted)
         then do
-          let msg = "Device is mounted: " <> TS.fromText (T.pack (unlines mounted))
-          logDebugN $ T.pack (show (FRFailure msg))
+          let msg = "Device is mounted: " <> TS.fromText $ T.pack $ unlines mounted
+          logDebugN $ T.pack $ show (FRFailure msg)
           pure $ FRFailure msg
         else if requireToken opts /= device
           then do
