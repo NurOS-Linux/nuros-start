@@ -5,19 +5,19 @@ module Main (main) where
 
 import Options.Applicative
 import Lib
-import Storage.OSLoader 
+import Storage.OSLoader
 import qualified Data.Text.Short as TS
 
 data Options = Options
   { optVerbose :: Bool
   , optDryRun  :: Bool
   , optJsonFile :: FilePath
-  } deriving (Show)
+  } deriving Show
 
-installOpts :: InstallOptions 
-installOpts = InstallOptions 
-  { osLoaderOpts = SystemdBoot 
-      SystemdBootOptions 
+installOpts :: InstallOptions
+installOpts = InstallOptions
+  { osLoaderOpts = SystemdBoot
+      SystemdBootOptions
         { efiDirectoryS = TS.fromString "/boot/efi/" }
   }
 
@@ -27,12 +27,8 @@ main = do
   putStrLn "Test arg:"
   print opts
   putStrLn ""
-  if optDryRun opts
-    then putStrLn "Dry Mode on"
-    else putStrLn "Dry mode off"
-  if optVerbose opts
-    then putStrLn "verbose on"
-    else return ()
+  when (woptDryRun opts) $ putStrLn "Dry Mode on"
+  when (optVerbose opts) $ putStrLn "verbose on"
   putStrLn $ optJsonFile opts
   result <- installNurOS installOpts
   putStrLn $ show result
@@ -45,6 +41,7 @@ optionsParser = Options
        <> help "Verbose output" )
   <*> switch
         ( long "dry-run"
+       <> short 'd'
        <> help "Execution without real work (for test)" )
   <*> argument str
         ( metavar "FILE.json"
@@ -55,5 +52,5 @@ optionsParser = Options
 optsInfo :: ParserInfo Options
 optsInfo = info (optionsParser <**> helper)
   ( fullDesc
- <> progDesc "A Haskell program that reads a JSON file and bootstrapping NurOS onto your device."
+ <> progDesc "A program that reads a JSON file and bootstrapping NurOS onto your device."
  <> header "nuros-install – utility for install NurOS from *.json config" )
